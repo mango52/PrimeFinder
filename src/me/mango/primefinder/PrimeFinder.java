@@ -53,12 +53,14 @@ public class PrimeFinder {
 		for (int i = 0; i < cores; i++) {
 			if (i == 0) {
 				Thread thread = new Thread(new MathThread(2, numbersPerCore));
-				System.out.println(2 + " - " + numbersPerCore);
+				thread.start();
+				threads.add(thread);
+			} else if ((i+1 == cores) && (((i+1)*numbersPerCore) != max)) { // rounding fix
+				Thread thread = new Thread(new MathThread((i*numbersPerCore+1), max));
 				thread.start();
 				threads.add(thread);
 			} else {
 				Thread thread = new Thread(new MathThread((i*numbersPerCore+1), ((i+1)*numbersPerCore)));
-				System.out.println((i*numbersPerCore+1) + " - " + ((i+1)*numbersPerCore));
 				thread.start();
 				threads.add(thread);
 			}
