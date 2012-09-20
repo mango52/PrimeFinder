@@ -46,12 +46,22 @@ public class PrimeFinder {
 		System.out.println("Found " + primes + " primes in " + maxNumber + " numbers (" + (((double) primes / (double) maxNumber) * 100) + "%)");
 	}
 
-	private static void dispatchThreads(int max) throws InterruptedException { // multi-threading base
-		// TODO: multi-core support
-		for (int i = 0; i < 1; i++) { // 0 here means we will only use one core
-			Thread thread = new Thread(new MathThread(2, max));
-			thread.start();
-			threads.add(thread);
+	private static void dispatchThreads(int max) throws InterruptedException {
+		// TODO: better work division
+		final int cores = Runtime.getRuntime().availableProcessors();
+		int numbersPerCore = max/cores;
+		for (int i = 0; i < cores; i++) {
+			if (i == 0) {
+				Thread thread = new Thread(new MathThread(2, numbersPerCore));
+				System.out.println(2 + " - " + numbersPerCore);
+				thread.start();
+				threads.add(thread);
+			} else {
+				Thread thread = new Thread(new MathThread((i*numbersPerCore+1), ((i+1)*numbersPerCore)));
+				System.out.println((i*numbersPerCore+1) + " - " + ((i+1)*numbersPerCore));
+				thread.start();
+				threads.add(thread);
+			}
 		}
 	}
 
